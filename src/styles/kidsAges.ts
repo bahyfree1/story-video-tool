@@ -5,8 +5,8 @@ export const kids3to5: Style = {
   name: 'kids3to5', fontFamily: 'StoryFont, sans-serif',
   backgrounds: {peach: ['#ffd6e0', '#fff1c9'], sky: ['#bfe9ff', '#f2fbff'], mint: ['#c9f7dc', '#f1fff7'], lemon: ['#fff3a8', '#ffe0b3']},
   defaultBg: ['peach', 'sky', 'mint', 'lemon'],
-  caption: {bg: 'rgba(255,255,255,0.95)', color: '#3a2f6b', highlight: '#ff4f81', size: 104, radius: 64, mode: 'pill'},
-  accent: '#ff7a59', stars: false, clouds: true, secondsPerVisual: 5, transition: 'zoom', charScale: 1.25, sparkles: true,
+  caption: {bg: 'rgba(255,255,255,0.95)', color: '#3a2f6b', highlight: '#ff4f81', size: 92, radius: 64, mode: 'pill'},
+  accent: '#ff7a59', stars: false, clouds: true, secondsPerVisual: 5, transition: 'zoom', charScale: 1.05, charBottom: 640, sparkles: true,
 };
 // 6-8: bright and playful, medium text.
 export const kids6to8: Style = {

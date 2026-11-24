@@ -8,6 +8,7 @@ export type Style = {
   transition?: 'wipe' | 'slide' | 'zoom' | 'fade';
   charScale?: number;
   sparkles?: boolean;
+  charBottom?: number; // distance of the character from the bottom (design px)
   look?: string; // default character look name
   accent: string;
   stars: boolean;

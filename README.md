@@ -14,7 +14,8 @@ text with *highlighted* words | directive=value | directive=value
   photo=file.jpg   image card with slow zoom         counter=10160:0:unit   ticking number
   bars=a:8849|b:10160   comparison bars              scale=10160:0:unit     vertical scale with moving marker
   balance=left:right    tilting balance scale        stamp=TEXT             stamp slams in
-  scene=fall|plane|map|mountain|candle|heart|subscribe
+  scene=fall|plane|map|mountain|candle|heart|sea|forest|space|city|subscribe
+  icon=star|question|bulb|check
   char=talk|happy|shock|think|fall|sad|none          the recurring cartoon character
   look=stewardess|boy|girl|cat|scientist   change the character (or set "look" in a style)
   bg=<background name from the style>                tr=wipe|slide|zoom|fade   scene transition
@@ -25,7 +26,7 @@ text with *highlighted* words | directive=value | directive=value
 ## Make a video
 pip install faster-whisper
 npm install
-node scripts/make.mjs <name> [style] [lang]     # output: out/<name>.mp4  (ASPECT=16:9 env or "aspect" in spec.json)
+node scripts/make.mjs <name> [style] [lang]     # output: out/<name>.mp4  (ASPECT=16:9 env or "aspect" in spec.json; 16:9 has its own layout: visual left, character right, caption bottom)
 node scripts/preview.mjs <name> [style]         # quick contact sheet of 6 frames, no full render
 Note: put NotoSansArabic-Bold.ttf (SIL OFL font) in public/fonts/ (it is not in this repo; the Drive zip has it). Whisper "small" downloads ~460MB on first run.
 

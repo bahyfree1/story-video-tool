@@ -168,3 +168,79 @@ export const Sparkles: React.FC<{f: number; color: string}> = ({f, color}) => (
     })}
   </>
 );
+
+// ---- more scenes ----
+export const SeaScene: React.FC<{f: number}> = ({f}) => (
+  <Area top={250} height={950}>
+    <svg width="1080" height="900" viewBox="0 0 1080 900">
+      <circle cx="800" cy="170" r="100" fill="#ffe27a" />
+      <g transform={`translate(${300 + Math.sin(f / 25) * 40} ${430 + Math.sin(f / 12) * 14}) rotate(${Math.sin(f / 14) * 4})`}>
+        <polygon points="0,0 0,-260 170,-40" fill="#fff" /><polygon points="-20,-20 -150,-20 -20,-200" fill="#ffd93b" />
+        <path d="M-120 0 H210 L170 90 H-70Z" fill="#e84855" />
+      </g>
+      {[0, 1, 2].map((i) => (
+        <path key={i} d={`M-100 ${560 + i * 110} ${Array.from({length: 9}).map((_, k) => `Q${k * 140 + 70 - ((f * (2 + i)) % 140)} ${520 + i * 110 + (k % 2 ? 40 : -40)} ${k * 140 + 140 - ((f * (2 + i)) % 140)} ${560 + i * 110}`).join(' ')} V900 H-100Z`} fill={['#4fb3ff', '#2d8be0', '#1c66b8'][i]} opacity="0.95" />
+      ))}
+    </svg>
+  </Area>
+);
+
+export const ForestScene: React.FC<{f: number}> = ({f}) => (
+  <Area top={250} height={950}>
+    <svg width="1080" height="900" viewBox="0 0 1080 900">
+      <rect y="720" width="1080" height="180" fill="#4aa564" />
+      {[80, 280, 470, 660, 860].map((x, i) => (
+        <g key={x} transform={`translate(${x} ${i % 2 ? 40 : 0}) rotate(${Math.sin(f / 20 + i) * 1.5} 80 720)`}>
+          <rect x="70" y="560" width="30" height="170" fill="#8b5a2b" />
+          <polygon points="85,260 -10,500 180,500" fill="#2e8b57" /><polygon points="85,360 -30,600 200,600" fill="#3aa56a" />
+        </g>
+      ))}
+      <circle cx="900" cy="140" r="70" fill="#ffe27a" />
+    </svg>
+  </Area>
+);
+
+export const SpaceScene: React.FC<{f: number}> = ({f}) => (
+  <Area top={200} height={1000}>
+    <svg width="1080" height="1000" viewBox="0 0 1080 1000">
+      <circle cx="800" cy="260" r="130" fill="#ff9a5c" /><ellipse cx="800" cy="260" rx="210" ry="40" fill="none" stroke="#ffd2a8" strokeWidth="12" transform="rotate(-18 800 260)" />
+      <circle cx="210" cy="720" r="70" fill="#6cc6ff" />
+      <g transform={`translate(${430 + Math.sin(f / 20) * 30} ${560 - f * 2 % 700 + 350}) rotate(25)`}>
+        <ellipse cx="0" cy="0" rx="60" ry="150" fill="#f4f6fa" /><circle cx="0" cy="-20" r="28" fill="#5ab0ff" />
+        <polygon points="-60,60 -110,150 -40,110" fill="#e84855" /><polygon points="60,60 110,150 40,110" fill="#e84855" />
+        <polygon points="-30,150 30,150 0,150 0,150" fill="none" /><ellipse cx="0" cy={175 + Math.sin(f / 2) * 12} rx="26" ry="50" fill="#ffb02e" />
+      </g>
+    </svg>
+  </Area>
+);
+
+export const CityScene: React.FC<{f: number}> = ({f}) => (
+  <Area top={250} height={950}>
+    <svg width="1080" height="900" viewBox="0 0 1080 900">
+      {[[40, 420, 130], [190, 300, 150], [360, 480, 120], [500, 250, 160], [680, 380, 140], [840, 330, 150]].map(([x, h, w], i) => (
+        <g key={i}>
+          <rect x={x} y={850 - h} width={w} height={h} fill={['#3b4a7a', '#4a5c94', '#2f3b66'][i % 3]} />
+          {Array.from({length: Math.floor(h / 60)}).map((_, r) => Array.from({length: 2}).map((__, c) => (
+            <rect key={`${r}${c}`} x={x + 25 + c * 55} y={850 - h + 25 + r * 60} width="28" height="34" fill={(f / 20 + r + c + i) % 3 < 2 ? '#ffe27a' : '#26305a'} />
+          )))}
+        </g>
+      ))}
+      <rect y="850" width="1080" height="50" fill="#222a44" />
+    </svg>
+  </Area>
+);
+
+// Simple animated icons: star, question, bulb, check
+export const IconScene: React.FC<{name: string; f: number}> = ({name, f}) => {
+  const {fps} = useVideoConfig();
+  const pop = spring({frame: f, fps, config: {damping: 7}});
+  const wob = Math.sin(f / 6) * 5;
+  let g: React.ReactNode;
+  if (name === 'question') g = <text x="50" y="82" fontSize="95" textAnchor="middle" fill="#ffd93b" fontWeight="900" fontFamily="sans-serif">?</text>;
+  else if (name === 'bulb') g = <g><circle cx="50" cy="42" r="26" fill="#ffe27a" /><rect x="40" y="66" width="20" height="14" rx="4" fill="#bbb" /><g stroke="#ffe27a" strokeWidth="4">{[0, 45, 90, 135, 180, 225, 270, 315].map((a) => <line key={a} x1="50" y1="42" x2={50 + Math.cos((a * Math.PI) / 180) * 46} y2={42 + Math.sin((a * Math.PI) / 180) * 46} opacity="0.5" />)}</g></g>;
+  else if (name === 'check') g = <g><circle cx="50" cy="50" r="40" fill="#35c46b" /><path d="M30 52 L45 67 L72 36" stroke="#fff" strokeWidth="10" fill="none" strokeLinecap="round" strokeLinejoin="round" /></g>;
+  else g = <polygon points="50,8 61,38 93,38 67,57 77,89 50,70 23,89 33,57 7,38 39,38" fill="#ffd93b" stroke="#fff" strokeWidth="3" />;
+  return (
+    <Area><svg width="720" height="720" viewBox="0 0 100 100" style={{transform: `scale(${pop}) rotate(${wob}deg)`}}>{g}</svg></Area>
+  );
+};

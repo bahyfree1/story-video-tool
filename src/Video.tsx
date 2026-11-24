@@ -5,7 +5,7 @@ import {styles} from './styles';
 import {Background} from './components/Background';
 import {Caption} from './components/Caption';
 import {PhotoCard, Counter, Bars, Scene, Subscribe} from './components/Visuals';
-import {Character, Mood} from './components/Character';
+import {Character, Mood, looks, defaultLook} from './components/Character';
 import {FallScene, PlaneScene, MountainScene, MapScene, ScaleScene, BalanceScene, CandleScene, StampScene, Sparkles} from './components/Scenes';
 import {interpolate} from 'remotion';
 
@@ -93,7 +93,7 @@ const LineScene: React.FC<{line: Timeline['lines'][number]; bg: string; prevBg: 
         {visual}
         {ch !== 'none' ? (
           <div style={{position: 'absolute', bottom: 520, [idx % 2 ? 'right' : 'left']: -10}}>
-            <Character mood={ch} localFrame={f} flip={idx % 2 === 1} size={(d.scene === 'fall' ? 400 : 520) * (st.charScale ?? 1)} />
+            <Character mood={ch} look={looks[d.look ?? st.look ?? 'stewardess'] ?? defaultLook} localFrame={f} flip={idx % 2 === 1} size={(d.scene === 'fall' ? 400 : 520) * (st.charScale ?? 1)} />
           </div>
         ) : null}
         <Caption line={line} style={st} localFrame={f} />

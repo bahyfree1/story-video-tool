@@ -8,6 +8,7 @@ export type Style = {
   transition?: 'wipe' | 'slide' | 'zoom' | 'fade';
   charScale?: number;
   sparkles?: boolean;
+  look?: string; // default character look name
   accent: string;
   stars: boolean;
   clouds: boolean;
@@ -15,5 +16,6 @@ export type Style = {
 };
 import {documentary} from './documentary';
 import {kidsBright} from './kidsBright';
+import {karaokeDark} from './karaokeDark';
 import {kids3to5, kids6to8, kids9to12} from './kidsAges';
-export const styles: Record<string, Style> = {documentary, kidsBright, kids3to5, kids6to8, kids9to12};
+export const styles: Record<string, Style> = {documentary, kidsBright, karaokeDark, kids3to5, kids6to8, kids9to12};

@@ -6,7 +6,7 @@ import {Background} from './components/Background';
 import {Caption} from './components/Caption';
 import {PhotoCard, Counter, Bars, Scene, Subscribe} from './components/Visuals';
 import {Character, Mood, looks, defaultLook} from './components/Character';
-import {FallScene, PlaneScene, MountainScene, MapScene, ScaleScene, BalanceScene, CandleScene, StampScene, Sparkles} from './components/Scenes';
+import {SeaScene, ForestScene, SpaceScene, CityScene, IconScene, FallScene, PlaneScene, MountainScene, MapScene, ScaleScene, BalanceScene, CandleScene, StampScene, Sparkles} from './components/Scenes';
 import {interpolate} from 'remotion';
 
 export const Video: React.FC<Timeline> = (tl) => {
@@ -71,6 +71,11 @@ const LineScene: React.FC<{line: Timeline['lines'][number]; bg: string; prevBg: 
   else if (d.scene === 'map') { visual = <MapScene f={f} dur={dur} style={st} />; }
   else if (d.scene === 'mountain') { visual = <MountainScene f={f} />; }
   else if (d.scene === 'candle') { visual = <CandleScene f={f} />; defaultChar = 'sad'; }
+  else if (d.scene === 'sea') { visual = <SeaScene f={f} />; }
+  else if (d.scene === 'forest') { visual = <ForestScene f={f} />; }
+  else if (d.scene === 'space') { visual = <SpaceScene f={f} />; }
+  else if (d.scene === 'city') { visual = <CityScene f={f} />; }
+  else if (d.icon) { visual = <IconScene name={d.icon} f={f} />; }
   else if (d.scene === 'plane') { visual = <PlaneScene f={f} dur={dur} />; }
   else if (d.scene) { visual = <Scene name={d.scene} localFrame={f} />; }
   const ch = (d.char ?? defaultChar) as Mood | 'none';
@@ -88,16 +93,29 @@ const LineScene: React.FC<{line: Timeline['lines'][number]; bg: string; prevBg: 
   return (
     <AbsoluteFill style={outer}>
       <Background style={st} bg={bg} prevBg={prevBg} localFrame={f} />
+      {width > height ? (
+        // Landscape: visual on the left (scaled design space), character on the right, caption across the bottom.
+        <AbsoluteFill style={{transform: `scale(${zoom})`}}>
+          <div style={{position: 'absolute', left: 200, top: 20 - 150 * 0.66, width: 1080, height: 1500, transform: 'scale(0.66)', transformOrigin: 'top left'}}>{visual}</div>
+          {ch !== 'none' ? (
+            <div style={{position: 'absolute', bottom: 230, right: 160}}>
+              <Character mood={ch} look={looks[d.look ?? st.look ?? 'stewardess'] ?? defaultLook} localFrame={f} size={440 * (st.charScale ?? 1)} />
+            </div>
+          ) : null}
+          <Caption line={line} style={st} localFrame={f} />
+        </AbsoluteFill>
+      ) : (
       <AbsoluteFill style={{width: 1080, height: 1920, left: (width - 1080) / 2, top: (height - 1920) / 2, transform: `scale(${fit * zoom})`}}>
         {st.sparkles === false ? null : <Sparkles f={f} color={st.accent} />}
         {visual}
         {ch !== 'none' ? (
-          <div style={{position: 'absolute', bottom: 520, [idx % 2 ? 'right' : 'left']: -10}}>
+          <div style={{position: 'absolute', bottom: st.charBottom ?? 520, [idx % 2 ? 'right' : 'left']: -10}}>
             <Character mood={ch} look={looks[d.look ?? st.look ?? 'stewardess'] ?? defaultLook} localFrame={f} flip={idx % 2 === 1} size={(d.scene === 'fall' ? 400 : 520) * (st.charScale ?? 1)} />
           </div>
         ) : null}
         <Caption line={line} style={st} localFrame={f} />
       </AbsoluteFill>
+      )}
     </AbsoluteFill>
   );
 };

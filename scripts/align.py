@@ -34,6 +34,16 @@ for raw in raw_lines:
     if not words and not dirs:
         continue
     lines.append({"words": words, "directives": dirs})
+# lines with no visual directive get the next unused image from images/ (sorted by name), shown as a Ken Burns photo card
+VIS = {"photo","counter","bars","scale","balance","stamp","scene"}
+imgdir = f"{base}/images"
+imgs = sorted(f for f in os.listdir(imgdir) if f.lower().endswith((".jpg",".jpeg",".png",".webp"))) if os.path.isdir(imgdir) else []
+used = {l["directives"]["photo"] for l in lines if "photo" in l["directives"]}
+free = [f for f in imgs if f not in used]
+if os.environ.get("AUTOPHOTOS", "1") == "1":
+    for l in lines:
+        if not (VIS & set(l["directives"])) and free:
+            l["directives"]["photo"] = free.pop(0)
 flat = [(li, wi) for li, l in enumerate(lines) for wi in range(len(l["words"]))]
 has_voice = os.path.exists(audio)
 if has_voice:

@@ -1,0 +1,8 @@
+تخيل إنك بتقع من ارتفاع *أعلى* من قمة إيفرست، وتعيش. | scene=fall | bg=sky
+ده حصل *بجد* سنة ١٩٧٢. | stamp=حقيقة | bg=rays
+دي *فيسنا*، مضيفة طيران عندها ٢٢ سنة. | scene=plane | char=happy | bg=sunset
+الرحلة كانت طالعة من *براغ* لحد بلجراد. | scene=map | bg=dark
+وفجأة الطيارة اتفجرت وهي في الجو. | char=shock | scene=mountain | bg=night
+ارتفاع *١٠٬١٦٠* متر، أعلى من أي جبل. | scale=10160:0:متر | bg=night
+واتقالها إن *احتمال* النجاة قليل جداً. | balance=معجزة:ظروف نادرة | bg=sunset
+وفيسنا *نجت*. تحيا الشجاعة! | scene=heart | char=happy | bg=rays

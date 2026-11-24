@@ -16,6 +16,7 @@ text with *highlighted* words | directive=value | directive=value
   balance=left:right    tilting balance scale        stamp=TEXT             stamp slams in
   scene=fall|plane|map|mountain|candle|heart|subscribe
   char=talk|happy|shock|think|fall|sad|none          the recurring cartoon character
+  look=stewardess|boy|girl|cat|scientist   change the character (or set "look" in a style)
   bg=<background name from the style>                tr=wipe|slide|zoom|fade   scene transition
 
 ## spec.json (alternative, easy for scripts/AI to write)
@@ -30,7 +31,8 @@ Note: put NotoSansArabic-Bold.ttf (SIL OFL font) in public/fonts/ (it is not in 
 
 ## Styles (src/styles)
 documentary (reference look, pill captions), kidsBright, kids3to5, kids6to8, kids9to12 (outline captions, faster).
-Caption modes: pill | karaoke | outline. Add your own: node scripts/new-style.mjs myStyle
+Caption modes: pill | karaoke | outline (karaokeDark = documentary + karaoke).
+Images: lines with no visual directive automatically get the next unused image from images/ (sorted by file name) as a Ken Burns photo card. Set AUTOPHOTOS=0 to turn that off. Add your own: node scripts/new-style.mjs myStyle
 
 ## Add a scene
 Add a component in src/components/Scenes.tsx and one branch in src/Video.tsx.

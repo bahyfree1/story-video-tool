@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Audio, Sequence, staticFile, useVideoConfig} from 'remotion';
+import {AbsoluteFill, Audio, Sequence, staticFile, useVideoConfig, useCurrentFrame} from 'remotion';
 import type {Timeline} from './types';
 import {styles} from './styles';
 import {Background} from './components/Background';
@@ -21,6 +21,7 @@ export const Video: React.FC<Timeline> = (tl) => {
   return (
     <AbsoluteFill style={{fontFamily: style.fontFamily}}>
       {tl.hasVoice ? <Audio src={staticFile(`projects/${tl.project}/voice.mp3`)} /> : null}
+      {tl.hasMusic ? <Music tl={tl} /> : null}
       {lines.map(({l, bg}, i) => {
         const from = Math.round(l.start * fps);
         const end = i + 1 < lines.length ? Math.round(lines[i + 1].l.start * fps) : Math.round(tl.duration * fps);
@@ -36,7 +37,23 @@ export const Video: React.FC<Timeline> = (tl) => {
   );
 };
 
-import {useCurrentFrame} from 'remotion';
+// Background music that ducks (drops to 35%) while a word is being spoken, with a short smooth ramp.
+const Music: React.FC<{tl: Timeline}> = ({tl}) => {
+  const base = tl.musicVolume ?? 0.25;
+  const spans = tl.lines.flatMap((l) => l.words.map((w) => [w.start, w.end] as const));
+  return (
+    <Audio
+      src={staticFile(`projects/${tl.project}/music.mp3`)}
+      loop
+      volume={(f) => {
+        const t = f / tl.fps;
+        const near = spans.some(([a, b]) => t >= a - 0.15 && t <= b + 0.25);
+        return base * (near ? 0.35 : 1);
+      }}
+    />
+  );
+};
+
 const LineScene: React.FC<{line: Timeline['lines'][number]; bg: string; prevBg: string; dur: number; style: ReturnType<typeof Object>; project: string; idx: number}> = ({line, bg, prevBg, dur, style, project, idx}) => {
   const f = useCurrentFrame();
   const d = line.directives;
@@ -59,20 +76,28 @@ const LineScene: React.FC<{line: Timeline['lines'][number]; bg: string; prevBg: 
   const ch = (d.char ?? defaultChar) as Mood | 'none';
   // slow camera drift plus a circle-wipe reveal at the start of each scene
   const zoom = interpolate(f, [0, dur], [1, 1.06], {extrapolateRight: 'clamp'});
-  const wipe = interpolate(f, [0, 12], [0, 150], {extrapolateRight: 'clamp'});
+  const tr = d.tr ?? st.transition ?? 'wipe';
+  const p = interpolate(f, [0, 12], [0, 1], {extrapolateRight: 'clamp'});
+  const outer: React.CSSProperties =
+    tr === 'wipe' ? {clipPath: `circle(${p * 150}% at 50% 55%)`} :
+    tr === 'slide' ? {transform: `translateX(${(1 - p) * 1080 * (idx % 2 ? -1 : 1)}px)`} :
+    tr === 'zoom' ? {transform: `scale(${0.6 + 0.4 * p})`, opacity: p} :
+    {opacity: p};
+  const {width, height} = useVideoConfig();
+  const fit = Math.min(width / 1080, height / 1920);
   return (
-    <AbsoluteFill style={{clipPath: `circle(${wipe}% at 50% 55%)`}}>
+    <AbsoluteFill style={outer}>
       <Background style={st} bg={bg} prevBg={prevBg} localFrame={f} />
-      <AbsoluteFill style={{transform: `scale(${zoom})`}}>
-        <Sparkles f={f} color={st.accent} />
+      <AbsoluteFill style={{width: 1080, height: 1920, left: (width - 1080) / 2, top: (height - 1920) / 2, transform: `scale(${fit * zoom})`}}>
+        {st.sparkles === false ? null : <Sparkles f={f} color={st.accent} />}
         {visual}
         {ch !== 'none' ? (
           <div style={{position: 'absolute', bottom: 520, [idx % 2 ? 'right' : 'left']: -10}}>
-            <Character mood={ch} localFrame={f} flip={idx % 2 === 1} size={d.scene === 'fall' ? 400 : 520} />
+            <Character mood={ch} localFrame={f} flip={idx % 2 === 1} size={(d.scene === 'fall' ? 400 : 520) * (st.charScale ?? 1)} />
           </div>
         ) : null}
+        <Caption line={line} style={st} localFrame={f} />
       </AbsoluteFill>
-      <Caption line={line} style={st} localFrame={f} />
     </AbsoluteFill>
   );
 };

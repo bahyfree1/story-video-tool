@@ -35,7 +35,7 @@ for raw in raw_lines:
         continue
     lines.append({"words": words, "directives": dirs})
 # lines with no visual directive get the next unused image from images/ (sorted by name), shown as a Ken Burns photo card
-VIS = {"photo","counter","bars","scale","balance","stamp","scene"}
+VIS = {"photo","counter","bars","scale","balance","stamp","scene","icon"}
 imgdir = f"{base}/images"
 imgs = sorted(f for f in os.listdir(imgdir) if f.lower().endswith((".jpg",".jpeg",".png",".webp"))) if os.path.isdir(imgdir) else []
 used = {l["directives"]["photo"] for l in lines if "photo" in l["directives"]}

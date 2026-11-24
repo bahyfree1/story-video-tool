@@ -8,7 +8,8 @@ const OUTLINE = [[-5,0],[5,0],[0,-5],[0,5],[-4,-4],[4,-4],[-4,4],[4,4],[-6,0],[6
 
 // Three caption looks: pill (reference), karaoke (big, current word lit, no box), outline (heavy stroked text).
 export const Caption: React.FC<{line: Line; style: Style; localFrame: number}> = ({line, style, localFrame}) => {
-  const {fps} = useVideoConfig();
+  const {fps, width, height} = useVideoConfig();
+  const land = width > height;
   const c = style.caption;
   const mode = c.mode ?? 'pill';
   const pop = spring({frame: localFrame, fps, config: {damping: 14, stiffness: 160}});
@@ -20,8 +21,8 @@ export const Caption: React.FC<{line: Line; style: Style; localFrame: number}> =
     ? {textShadow: OUTLINE}
     : mode === 'karaoke' ? {textShadow: `${OUTLINE}, 0 6px 24px rgba(0,0,0,0.6)`} : {};
   return (
-    <div style={{position: 'absolute', left: 50, right: 50, bottom: 300, display: 'flex', justifyContent: 'center', transform: `scale(${0.85 + 0.15 * pop})`, opacity: Math.min(1, pop * 1.5)}}>
-      <div dir="rtl" style={{...box, color: c.color, fontSize: c.size, fontWeight: 700, fontFamily: style.fontFamily, lineHeight: 1.45, textAlign: 'center', maxWidth: 980}}>
+    <div style={{position: 'absolute', left: land ? 120 : 50, right: land ? 120 : 50, bottom: land ? 50 : 300, display: 'flex', justifyContent: 'center', transform: `scale(${0.85 + 0.15 * pop})`, opacity: Math.min(1, pop * 1.5)}}>
+      <div dir="rtl" style={{...box, color: c.color, fontSize: land ? Math.round(c.size * 0.72) : c.size, fontWeight: 700, fontFamily: style.fontFamily, lineHeight: 1.45, textAlign: 'center', maxWidth: land ? 1650 : 980}}>
         {line.words.map((w, i) => {
           const active = t >= w.start && t < w.end;
           const spoken = t >= w.start - 0.05;

@@ -11,5 +11,8 @@ export type Timeline = {
   fps: number;
   duration: number; // seconds
   hasVoice: boolean;
+  hasMusic?: boolean;
+  aspect?: '9:16' | '16:9' | '1:1';
+  musicVolume?: number; // 0..1 while nobody speaks (ducked to 35% during speech)
   lines: Line[];
 };

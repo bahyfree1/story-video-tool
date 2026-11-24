@@ -6,7 +6,19 @@ lang = sys.argv[3] if len(sys.argv) > 3 else "ar"
 base = f"public/projects/{proj}"
 audio = f"{base}/voice.mp3"
 lines = []
-for raw in open(f"{base}/script.txt", encoding="utf-8").read().splitlines():
+aspect = os.environ.get("ASPECT", "9:16")
+spec_path = f"{base}/spec.json"
+raw_lines = []
+if os.path.exists(spec_path):
+    # spec.json: {"style": "...", "lang": "ar", "aspect": "9:16", "musicVolume": 0.25, "lines": [{"text": "…*key*…", "scene": "map", "char": "happy", "tr": "slide"}]}
+    spec = json.load(open(spec_path, encoding="utf-8"))
+    style = spec.get("style", style); lang = spec.get("lang", lang); aspect = spec.get("aspect", aspect)
+    for it in spec["lines"]:
+        extra = "".join(f" | {k}={v}" for k, v in it.items() if k != "text")
+        raw_lines.append(it["text"] + extra)
+else:
+    raw_lines = open(f"{base}/script.txt", encoding="utf-8").read().splitlines()
+for raw in raw_lines:
     raw = raw.strip()
     if not raw or raw.startswith("#"):
         continue
@@ -50,6 +62,6 @@ for i, l in enumerate(lines):
         l["start"] = lines[i-1]["end"] if i else 0.0; l["end"] = l["start"] + 2
 for i in range(len(lines) - 1):
     lines[i]["end"] = lines[i + 1]["start"]
-out = {"project": proj, "style": style, "fps": 30, "duration": dur + 0.3, "hasVoice": has_voice, "lines": lines}
+out = {"project": proj, "style": style, "fps": 30, "duration": dur + 0.3, "hasVoice": has_voice, "hasMusic": os.path.exists(f"{base}/music.mp3"), "aspect": aspect, "lines": lines}
 json.dump(out, open(f"{base}/timeline.json", "w"), ensure_ascii=False, indent=1)
 print("timeline:", len(lines), "lines,", round(dur, 1), "s")

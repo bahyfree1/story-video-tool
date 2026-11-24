@@ -1,28 +1,34 @@
 import React from 'react';
-import {spring, useCurrentFrame, useVideoConfig} from 'remotion';
+import {spring, useVideoConfig} from 'remotion';
 import type {Line} from '../types';
 import type {Style} from '../styles';
 
+// Three caption looks: pill (reference), karaoke (big, current word lit, no box), outline (heavy stroked text).
 export const Caption: React.FC<{line: Line; style: Style; localFrame: number}> = ({line, style, localFrame}) => {
   const {fps} = useVideoConfig();
-  const frame = useCurrentFrame();
   const c = style.caption;
+  const mode = c.mode ?? 'pill';
   const pop = spring({frame: localFrame, fps, config: {damping: 14, stiffness: 160}});
   const t = line.start + localFrame / fps;
+  const box: React.CSSProperties = mode === 'pill'
+    ? {background: c.bg, borderRadius: c.radius, padding: '32px 48px', boxShadow: '0 12px 40px rgba(0,0,0,0.35)'}
+    : {padding: '10px 20px'};
+  const strokeCss: React.CSSProperties = mode === 'outline'
+    ? {WebkitTextStroke: '10px #000', paintOrder: 'stroke fill', textShadow: '0 8px 0 rgba(0,0,0,0.5)'}
+    : mode === 'karaoke' ? {textShadow: '0 6px 24px rgba(0,0,0,0.55)'} : {};
   return (
     <div style={{position: 'absolute', left: 50, right: 50, bottom: 300, display: 'flex', justifyContent: 'center', transform: `scale(${0.85 + 0.15 * pop})`, opacity: Math.min(1, pop * 1.5)}}>
-      <div
-        dir="rtl"
-        style={{
-          background: c.bg, color: c.color, borderRadius: c.radius, padding: '32px 48px', fontSize: c.size, fontWeight: 700,
-          fontFamily: style.fontFamily, lineHeight: 1.45, textAlign: 'center', boxShadow: '0 12px 40px rgba(0,0,0,0.35)', maxWidth: 980,
-        }}
-      >
-        {line.words.map((w, i) => (
-          <span key={i} style={{color: w.highlight ? c.highlight : c.color, display: 'inline-block', marginInline: 8, opacity: t >= w.start - 0.05 ? 1 : 0.25, transform: t >= w.start && t < w.end ? 'scale(1.1) translateY(-4px)' : 'scale(1)'}}>
-            {w.text}
-          </span>
-        ))}
+      <div dir="rtl" style={{...box, color: c.color, fontSize: c.size, fontWeight: 700, fontFamily: style.fontFamily, lineHeight: 1.45, textAlign: 'center', maxWidth: 980}}>
+        {line.words.map((w, i) => {
+          const active = t >= w.start && t < w.end;
+          const spoken = t >= w.start - 0.05;
+          const lit = mode === 'karaoke' ? active : w.highlight;
+          return (
+            <span key={i} style={{...strokeCss, color: lit || (mode === 'karaoke' && w.highlight && spoken) ? c.highlight : c.color, display: 'inline-block', marginInline: 8, opacity: spoken ? 1 : 0.3, transform: active ? 'scale(1.12) translateY(-5px)' : 'scale(1)'}}>
+              {w.text}
+            </span>
+          );
+        })}
       </div>
     </div>
   );

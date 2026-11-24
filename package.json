@@ -1,0 +1,17 @@
+{
+  "name": "story-video-tool",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "make": "node scripts/make.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.547",
+    "@types/react": "^19.3.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.547",
+    "typescript": "^7.0.2"
+  }
+}

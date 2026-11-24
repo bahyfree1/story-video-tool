@@ -3,8 +3,16 @@ import {useCurrentFrame, spring, useVideoConfig, interpolate} from 'remotion';
 
 export type Mood = 'talk' | 'happy' | 'shock' | 'think' | 'fall' | 'sad';
 
-export type Look = {skin: string; hair: string; outfit: string; scarf: string; pants: string; hat?: string};
+export type Look = {skin: string; hair: string; outfit: string; scarf: string; pants: string; hat?: string; ears?: boolean; shortHair?: boolean};
 export const defaultLook: Look = {skin: '#ffd3b0', hair: '#f6c744', outfit: '#2d6fd6', scarf: '#e84855', pants: '#23304f', hat: '#2d6fd6'};
+// Presets for the look= directive or the style's default. Add your own here.
+export const looks: Record<string, Look> = {
+  stewardess: defaultLook,
+  boy: {skin: '#f2c29b', hair: '#3b2a20', outfit: '#2fa36b', scarf: '#ffd93b', pants: '#34405e', shortHair: true},
+  girl: {skin: '#e9b48c', hair: '#6b3a1e', outfit: '#e85d9a', scarf: '#fff', pants: '#5a4a9c'},
+  cat: {skin: '#ffb15c', hair: '#ff9a2e', outfit: '#6c5ce7', scarf: '#ffe14d', pants: '#2d3436', ears: true, shortHair: true},
+  scientist: {skin: '#ffd3b0', hair: '#c9c9d6', outfit: '#f4f6fa', scarf: '#2d6fd6', pants: '#34405e', shortHair: true},
+};
 
 // One recurring flat-vector character. Change `look` to restyle. Mood changes arms, eyes and mouth.
 export const Character: React.FC<{mood: Mood; look?: Look; talking?: boolean; localFrame: number; flip?: boolean; size?: number}> = ({mood, look = defaultLook, talking = true, localFrame, flip, size = 560}) => {
@@ -36,7 +44,8 @@ export const Character: React.FC<{mood: Mood; look?: Look; talking?: boolean; lo
   return (
     <div style={{width: size, height: size * 1.6, transform: `translateY(${bob}px) scale(${(0.6 + 0.4 * enter) * (flip ? -1 : 1)}, ${0.6 + 0.4 * enter}) rotate(${rot}deg)`, opacity: Math.min(1, enter * 2), filter: 'drop-shadow(0 18px 24px rgba(0,0,0,0.35))'}}>
       <svg viewBox="0 0 400 640" width="100%" height="100%">
-        <ellipse cx="200" cy="165" rx="108" ry="125" fill={look.hair} />
+        {look.ears ? (<g><polygon points="120,110 128,20 190,80" fill={look.skin} /><polygon points="280,110 272,20 210,80" fill={look.skin} /><polygon points="136,90 138,50 170,78" fill="#ff9ea0" /><polygon points="264,90 262,50 230,78" fill="#ff9ea0" /></g>) : null}
+        {look.shortHair ? null : <ellipse cx="200" cy="165" rx="108" ry="125" fill={look.hair} />}
         <rect x="150" y="470" width="46" height="130" rx="20" fill={look.pants} />
         <rect x="204" y="470" width="46" height="130" rx="20" fill={look.pants} />
         <ellipse cx="170" cy="605" rx="40" ry="18" fill="#1a1a2e" />
@@ -53,7 +62,7 @@ export const Character: React.FC<{mood: Mood; look?: Look; talking?: boolean; lo
         <path d="M148 140 Q168 128 188 140" stroke="#6b4a1e" strokeWidth="6" fill="none" strokeLinecap="round" />
         <path d="M212 140 Q232 128 252 140" stroke="#6b4a1e" strokeWidth="6" fill="none" strokeLinecap="round" />
         {mouthEl}
-        <path d="M112 160 Q120 70 200 68 Q282 70 290 160 Q250 105 200 112 Q150 105 112 160Z" fill={look.hair} />
+        {look.ears ? null : <path d="M112 160 Q120 70 200 68 Q282 70 290 160 Q250 105 200 112 Q150 105 112 160Z" fill={look.hair} />}
         {look.hat ? (<g><rect x="140" y="48" width="120" height="34" rx="12" fill={look.hat} /><rect x="160" y="30" width="80" height="26" rx="10" fill={look.hat} /></g>) : null}
       </svg>
     </div>

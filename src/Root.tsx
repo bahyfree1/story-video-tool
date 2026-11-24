@@ -22,6 +22,10 @@ export const Root: React.FC = () => (
     fps={30}
     durationInFrames={150}
     defaultProps={empty}
-    calculateMetadata={({props}) => ({durationInFrames: Math.max(30, Math.ceil(props.duration * props.fps)), fps: props.fps})}
+    calculateMetadata={({props}) => {
+      const a = props.aspect ?? '9:16';
+      const [width, height] = a === '16:9' ? [1920, 1080] : a === '1:1' ? [1080, 1080] : [1080, 1920];
+      return {durationInFrames: Math.max(30, Math.ceil(props.duration * props.fps)), fps: props.fps, width, height};
+    }}
   />
 );
